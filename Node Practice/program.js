@@ -9,6 +9,6 @@ The list of files should be printed to the console, one file per line. You must 
 var fs = require('fs');
 var path = process.argv[2];
 fs.readdir(path, function (err, list) {
-  console.log(list);
-  console.log(process.argv[3]);
+  console.log(list);      //gives me the full list
+  console.log(process.argv[3]);     //checking what file type that needs filtering
 });
