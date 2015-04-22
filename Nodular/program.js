@@ -1,3 +1,17 @@
+//rename this as module
+function name (where, extension, callback) {
+  var fs = require('fs');
+  var path  = require('path');
+  fs.readdir(where, callback(err, list) {
+    if (err) {
+      callback(err);
+    };
+    var results = list.filter(function(file) {
+      return path.extname(file) === '.' + extension;
+    });
+    callback (null, results);
+  });
+module.exports = name; 
 /*
 PROMPT
 This problem is the same as the previous but introduces the concept of modules. You will need to create two files to solve this.
