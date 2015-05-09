@@ -1,35 +1,43 @@
-var http = require('http');
-var get = process.argv[2];
-
-http.get (get, function (getterino) {
-  getterino.setEncoding('utf8');
-  getterino.on ('data', function (data) {
-    console.log (data);
-  });
-});
 /*
-Write a program that performs an HTTP GET request to a URL provided to you as the first command-line argument. Write the String contents of each "data" event from the response to a new line on the console (stdout).
+
+Write a program that performs an HTTP GET request to a URL provided to you as the first command-line argument. Collect all data from the server (not just the first "data" event) and then write two lines to the console (stdout).
+
+The first line you write should just be an integer representing the number of characters received from the server. The second line should contain the complete String of characters sent by the server.
 
 -------------------------------------------------------------------------------
 
 ## HINTS
 
-For this exercise you will need to use the http core module.
+There are two approaches you can take to this problem:
 
-Documentation on the http module can be found by pointing your browser here:
-  file:///usr/local/lib/node_modules/learnyounode/node_apidoc/http.html
+1) Collect data across multiple "data" events and append the results together prior to printing the output. Use the "end" event to determine when the stream is finished and you can write the output.
 
-The http.get() method is a shortcut for simple GET requests, use it to simplify your solution. The first argument to http.get() can be the URL you want to GET; provide a callback as the second argument.
+2) Use a third-party package to abstract the difficulties involved in collecting an entire stream of data. Two different packages provide a useful API for solving this problem (there are likely more!): bl (Buffer List) and concat-stream; take your pick!
 
-Unlike other callback functions, this one has the signature:
+  <http://npm.im/bl>
+  <http://npm.im/concat-stream>
 
-    function callback (response) { ... }
+To install a Node package, use the Node Package Manager npm. Simply type:
 
-Where the response object is a Node Stream object. You can treat Node Streams as objects that emit events. The three events that are of most interest are: "data", "error" and "end". You listen to an event like so:
+    $ npm install bl
 
-    response.on("data", function (data) { ... })
+And it will download and install the latest version of the package into a subdirectory named node_modules. Any package in this subdirectory under your main program file can be loaded with the require syntax without being prefixed by './':
 
-The "data" event is emitted when a chunk of data is available and can be processed. The size of the chunk depends upon the underlying data source.
+    var bl = require('bl')
+
+Node will first look in the core modules and then in the node_modules directory where the package is located.
+
+If you don't have an Internet connection, simply make a node_modules directory and copy the entire directory for the package you want to use from inside the learnyounode installation directory:
+
+  file:///usr/local/lib/node_modules/learnyounode/node_modules/bl
+  file:///usr/local/lib/node_modules/learnyounode/node_modules/concat-stream
+
+Both bl and concat-stream can have a stream piped in to them and they will collect the data for you. Once the stream has ended, a callback will be fired with the data:
+
+    response.pipe(bl(function (err, data) {  ...  }))
+    // or
+    response.pipe(concatStream(function (data) {  ...  }))
+
+Note that you will probably need to data.toString() to convert from a Buffer.
+
 */
-
-The response object / Stream that you get from http.get() also has a setEncoding() method. If you call this method with "utf8", the "data" events will emit Strings rather than the standard Node Buffer objects which you have to explicitly convert to Strings.
